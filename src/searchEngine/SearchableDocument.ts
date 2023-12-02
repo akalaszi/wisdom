@@ -4,17 +4,14 @@ export class SearchableDocument {
   summary: string;
   words: Set<string> = new Set();
 
-  constructor(uri: string, summary: string) {
+  constructor(uri: string, summary: string, words: Set<string>) {
     this.uri = uri;
     this.summary = summary;
+    this.words = words;
   }
 
   incrementClickCount() {
     this.clickCount++;
-  }
-
-  addWord(word: string) {
-    this.words.add(word);
   }
 
   *yieldWords() {

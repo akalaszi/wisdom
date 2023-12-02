@@ -1,12 +1,9 @@
+import { traverseFiles } from "../etl/LocalFileSystemCrawler";
 import { SearchableDocument } from "./SearchableDocument";
-
+import {logger } from "../Logger";
 export namespace SearchEngine {
   class DocumentStore {
-    documents: Set<SearchableDocument>;
-
-    constructor() {
-      this.documents = new Set<SearchableDocument>();
-    }
+    documents: Set<SearchableDocument>= new Set<SearchableDocument>();
 
     addDocument(document: SearchableDocument) {
       this.documents.add(document);
@@ -91,3 +88,25 @@ export namespace SearchEngine {
     }
   }
 }
+
+function build(): SearchEngine.WordSearch {
+  
+  const wordSearch = new SearchEngine.WordSearch();
+  const fileIterator = traverseFiles();
+  for (const file of fileIterator) {
+    wordSearch.addDocument(file.toSearchableDocument());
+  }
+  return wordSearch;
+}
+
+
+  const wordSearch = build();
+  logger.info("------");
+  const results = wordSearch.search("the", 10);
+  logger.info(results.map((result) => result.uri));
+
+  results[3].incrementClickCount();
+  wordSearch.upVote(results[3]);
+
+  const results2 = wordSearch.search("the", 10);
+  logger.info(results2.map((result) => result.uri));
