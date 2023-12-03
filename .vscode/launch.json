@@ -1,0 +1,19 @@
+// Use IntelliSense to learn about possible attributes.
+// Hover to view descriptions of existing attributes.
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+//       "program": "${workspaceFolder}/src/server.ts",
+//"runtimeArgs": ["-r", "ts-node/register"],
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "runtimeExecutable": "${env:HOME}/.nvm/versions/node/v20.7.0/bin/node",
+      "program": "${workspaceFolder}/src/searchEngine/Paginator.ts",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    }
+  ]
+}

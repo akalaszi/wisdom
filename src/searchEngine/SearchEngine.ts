@@ -2,6 +2,7 @@ import { traverseFiles } from "../etl/LocalFileSystemCrawler";
 import { SearchableDocument } from "./SearchableDocument";
 import { logger } from "../Logger";
 import { fetchMovie } from "../etl/OMDBclient";
+
 export namespace SearchEngine {
   class DocumentStore {
     documents: Set<SearchableDocument> = new Set<SearchableDocument>();
@@ -16,6 +17,9 @@ export namespace SearchEngine {
 
     retrieve(retrieveCount: number): SearchableDocument[] {
       return Array.from(this.documents).slice(0, retrieveCount);
+    }
+    size(): number {
+      return this.documents.size;
     }
   }
 
@@ -48,6 +52,12 @@ export namespace SearchEngine {
       const previousStore = this.priorityStores[document.clickCount - 1];
       previousStore.removeDocument(document);
       this.addDocument(document);
+    }
+
+    getDocumentCount(): number {
+      return this.priorityStores.reduce((acc, store) => {
+        return acc + store.size();
+      }, 0);
     }
   }
 
@@ -98,20 +108,28 @@ export namespace SearchEngine {
       }
       return priorityStore.retrieveTopN(retrieveCount);
     }
-  }
-}
 
-function build(): SearchEngine.WordSearch {
-  const wordSearch = new SearchEngine.WordSearch();
-  const fileIterator = traverseFiles();
-  for (const file of fileIterator) {
-    wordSearch.addDocument(file.toSearchableDocument());
+    getDocumentCount(searchTerm: string): number {
+      const priorityStore = this.documents.get(searchTerm);
+      if (!priorityStore) {
+        return 0;
+      }
+      return priorityStore.getDocumentCount();
+    }
   }
-  return wordSearch;
+
+  export function build(): SearchEngine.WordSearch {
+    const wordSearch = new SearchEngine.WordSearch();
+    const fileIterator = traverseFiles();
+    for (const file of fileIterator) {
+      wordSearch.addDocument(file.toSearchableDocument());
+    }
+    return wordSearch;
+  }
 }
 
 const run = async () => {
-  const wordSearch = build();
+  const wordSearch = SearchEngine.build();
   logger.info("------");
   const results = await wordSearch.search("the", 10);
   logger.info(results.map((result) => result.uri));
