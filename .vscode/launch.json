@@ -12,7 +12,7 @@
       "name": "Launch Program",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "runtimeExecutable": "${env:HOME}/.nvm/versions/node/v20.7.0/bin/node",
-      "program": "${workspaceFolder}/src/searchEngine/Paginator.ts",
+      "program": "${workspaceFolder}/src/server.ts",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]

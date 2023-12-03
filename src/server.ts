@@ -33,6 +33,8 @@ app.patch("/upvote", (req, res) => {
   res.send("OK");
 });
 
+app.use("/datasets", express.static(`${__dirname}/../datasets`));
+
 app.listen(port, () => {
   logger.info(`Server running at http://localhost:${port}`);
 });

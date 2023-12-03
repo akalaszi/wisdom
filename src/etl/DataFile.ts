@@ -2,6 +2,7 @@ import { SearchableDocument } from "../searchEngine/SearchableDocument";
 
 export class DataFile {
   DEFAULT_SUMMARY_SIZE = 3;
+  URI_PREFIX = "http://localhost:3000/";
   filePath: string;
   content: string[];
 
@@ -41,6 +42,10 @@ export class DataFile {
   toSearchableDocument(): SearchableDocument {
     const tokens = this.extractUniqueTokens();
     const summary = this.extractSummary();
-    return new SearchableDocument(this.filePath, summary, tokens);
+    return new SearchableDocument(
+      this.URI_PREFIX + this.filePath,
+      summary,
+      tokens
+    );
   }
 }
