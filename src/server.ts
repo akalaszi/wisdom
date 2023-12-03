@@ -24,8 +24,12 @@ app.get("/search", async (req, res) => {
 });
 
 app.patch("/upvote", (req, res) => {
-  const uri = req.query.uri;
-  wordSearch.upVote(uri as string);
+  const document = wordSearch.getDocument(req.query.uri as string);
+  if (!document) {
+    res.status(404).send("Not found");
+    return;
+  }
+  wordSearch.upVote(document);
   res.send("OK");
 });
 

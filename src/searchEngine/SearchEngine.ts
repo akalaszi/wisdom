@@ -66,6 +66,7 @@ export namespace SearchEngine {
   }
 
   export class WordSearch {
+
     wordToPriorityStore: Map<string, PriorityDocumentStore>;
     uriToDocument: Map<string, SearchableDocument> = new Map();
 
@@ -91,12 +92,13 @@ export namespace SearchEngine {
       );
     }
 
-    upVote(uri: string) {
-      logger.info(`Upvoting ${uri}`);
-      const document = this.uriToDocument.get(uri);
-      if (!document) {
-        throw new Error("Document not found in the store.");
-      }
+    getDocument(uri: string) {
+      logger.info(`Retrieving document ${uri}`);
+      return this.uriToDocument.get(uri);
+    }
+
+    upVote(document: SearchableDocument) {
+      logger.info(`Upvoting ${document.uri}`);
       const previoiusPriority = document.clickCount;
       document.incrementClickCount();
       logger.info(`Increased priority:${document.clickCount}`);
