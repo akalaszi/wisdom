@@ -1,9 +1,10 @@
 import { traverseFiles } from "../etl/LocalFileSystemCrawler";
 import { SearchableDocument } from "./SearchableDocument";
-import {logger } from "../Logger";
+import { logger } from "../Logger";
+import { fetchMovie } from "../etl/OMDB";
 export namespace SearchEngine {
   class DocumentStore {
-    documents: Set<SearchableDocument>= new Set<SearchableDocument>();
+    documents: Set<SearchableDocument> = new Set<SearchableDocument>();
 
     addDocument(document: SearchableDocument) {
       this.documents.add(document);
@@ -79,7 +80,18 @@ export namespace SearchEngine {
       }
     }
 
-    search(searchTerm: string, retrieveCount: number): SearchableDocument[] {
+    private async ingestMovieDocument(title: string) {
+      const movies = await fetchMovie(title);
+      movies.forEach((movie) => {
+        this.addDocument(movie.toSearchableDocument());
+      });
+    }
+
+    async search(
+      searchTerm: string,
+      retrieveCount: number
+    ): Promise<SearchableDocument[]> {
+      await this.ingestMovieDocument(searchTerm);
       const priorityStore = this.documents.get(searchTerm);
       if (!priorityStore) {
         return [];
@@ -90,7 +102,6 @@ export namespace SearchEngine {
 }
 
 function build(): SearchEngine.WordSearch {
-  
   const wordSearch = new SearchEngine.WordSearch();
   const fileIterator = traverseFiles();
   for (const file of fileIterator) {
@@ -99,14 +110,17 @@ function build(): SearchEngine.WordSearch {
   return wordSearch;
 }
 
-
+const run = async () => {
   const wordSearch = build();
   logger.info("------");
-  const results = wordSearch.search("the", 10);
+  const results = await wordSearch.search("the", 10);
   logger.info(results.map((result) => result.uri));
 
   results[3].incrementClickCount();
   wordSearch.upVote(results[3]);
 
-  const results2 = wordSearch.search("the", 10);
+  const results2 = await wordSearch.search("the", 10);
   logger.info(results2.map((result) => result.uri));
+};
+
+run();
