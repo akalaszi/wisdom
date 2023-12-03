@@ -18,6 +18,7 @@ export namespace SearchEngine {
     retrieve(retrieveCount: number): SearchableDocument[] {
       return Array.from(this.documents).slice(0, retrieveCount);
     }
+
     size(): number {
       return this.documents.size;
     }
@@ -48,8 +49,11 @@ export namespace SearchEngine {
       return documents;
     }
 
-    upVote(document: SearchableDocument) {
-      const previousStore = this.priorityStores[document.clickCount - 1];
+    move(fromPriority: number, document: SearchableDocument) {
+      const previousStore = this.priorityStores[fromPriority];
+      if (!previousStore) {
+        throw new Error("Document not found in the store.");
+      }
       previousStore.removeDocument(document);
       this.addDocument(document);
     }
@@ -62,31 +66,47 @@ export namespace SearchEngine {
   }
 
   export class WordSearch {
-    documents: Map<string, PriorityDocumentStore>;
+    wordToPriorityStore: Map<string, PriorityDocumentStore>;
+    uriToDocument: Map<string, SearchableDocument> = new Map();
 
     constructor() {
-      this.documents = new Map();
+      this.wordToPriorityStore = new Map();
     }
 
     addDocument(document: SearchableDocument) {
+      logger.info(`Adding document ${document.uri}`);
+      this.uriToDocument.set(document.uri, document);
+
       for (const word of document.yieldWords()) {
-        let priorityStore = this.documents.get(word);
+        let priorityStore = this.wordToPriorityStore.get(word);
 
         if (!priorityStore) {
           priorityStore = new PriorityDocumentStore();
-          this.documents.set(word, priorityStore);
+          this.wordToPriorityStore.set(word, priorityStore);
         }
         priorityStore.addDocument(document);
       }
+      logger.info(
+        `Document is assigned to ${document.uniqeWordCount()} unique words.`
+      );
     }
 
-    upVote(document: SearchableDocument) {
+    upVote(uri: string) {
+      logger.info(`Upvoting ${uri}`);
+      const document = this.uriToDocument.get(uri);
+      if (!document) {
+        throw new Error("Document not found in the store.");
+      }
+      const previoiusPriority = document.clickCount;
+      document.incrementClickCount();
+      logger.info(`Increased priority:${document.clickCount}`);
+
       for (const word of document.yieldWords()) {
-        const priorityStore = this.documents.get(word);
+        const priorityStore = this.wordToPriorityStore.get(word);
         if (!priorityStore) {
           throw new Error("Document not found in the store.");
         }
-        priorityStore.upVote(document);
+        priorityStore.move(previoiusPriority, document);
       }
     }
 
@@ -102,7 +122,7 @@ export namespace SearchEngine {
       retrieveCount: number
     ): Promise<SearchableDocument[]> {
       await this.ingestMovieDocument(searchTerm);
-      const priorityStore = this.documents.get(searchTerm);
+      const priorityStore = this.wordToPriorityStore.get(searchTerm);
       if (!priorityStore) {
         return [];
       }
@@ -110,7 +130,7 @@ export namespace SearchEngine {
     }
 
     getDocumentCount(searchTerm: string): number {
-      const priorityStore = this.documents.get(searchTerm);
+      const priorityStore = this.wordToPriorityStore.get(searchTerm);
       if (!priorityStore) {
         return 0;
       }
@@ -119,26 +139,15 @@ export namespace SearchEngine {
   }
 
   export function build(): SearchEngine.WordSearch {
+    logger.info("Building search engine");
     const wordSearch = new SearchEngine.WordSearch();
     const fileIterator = traverseFiles();
+    let fileCount = 0;
     for (const file of fileIterator) {
       wordSearch.addDocument(file.toSearchableDocument());
+      fileCount++;
     }
+    logger.info(`Indexed ${fileCount} files`);
     return wordSearch;
   }
 }
-
-const run = async () => {
-  const wordSearch = SearchEngine.build();
-  logger.info("------");
-  const results = await wordSearch.search("the", 10);
-  logger.info(results.map((result) => result.uri));
-
-  results[3].incrementClickCount();
-  wordSearch.upVote(results[3]);
-
-  const results2 = await wordSearch.search("the", 10);
-  logger.info(results2.map((result) => result.uri));
-};
-
-run();

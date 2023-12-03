@@ -19,4 +19,8 @@ export class SearchableDocument {
       yield word;
     }
   }
+
+  uniqeWordCount(): number {
+    return this.words.size;
+  }
 }
