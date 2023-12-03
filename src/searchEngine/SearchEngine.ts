@@ -1,7 +1,7 @@
 import { traverseFiles } from "../etl/LocalFileSystemCrawler";
 import { SearchableDocument } from "./SearchableDocument";
 import { logger } from "../Logger";
-import { fetchMovie } from "../etl/OMDB";
+import { fetchMovie } from "../etl/OMDBclient";
 export namespace SearchEngine {
   class DocumentStore {
     documents: Set<SearchableDocument> = new Set<SearchableDocument>();
