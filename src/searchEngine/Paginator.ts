@@ -2,7 +2,7 @@ import { SearchEngine } from "./SearchEngine";
 import { SearchableDocument } from "./SearchableDocument";
 import { logger } from "../Logger";
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 10;
 
 export class Paginator {
   wordSearch: SearchEngine.WordSearch;
@@ -19,7 +19,7 @@ export class Paginator {
     const lastNResults = topNReults.slice(-PAGE_SIZE);
     const totalResultCount: number =
       this.wordSearch.getDocumentCount(searchTerm);
-    const nextPageSize = Math.min(PAGE_SIZE, totalResultCount - topN);
+    const nextPageSize = Math.max(Math.min(PAGE_SIZE, totalResultCount - topN),0);
     return Promise.resolve(
       new Page(pageNumber, lastNResults, nextPageSize, totalResultCount)
     );
