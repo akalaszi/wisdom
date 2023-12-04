@@ -8,11 +8,10 @@ First time startup:
 ```
 ./init.sh
 ```
-On Windows follow the steps as per the `init.sh` above.
-For subsequent launches, use `npm start` from the project root.
+Use `npm start` from the project root for any subsequent launches. On Windows follow the steps as per the `init.sh` above. 
 
 ## How to use
-The `init.sh`` script is designed to launch both the server and frontend, and it should automatically open the default browser, directing it to http://localhost:3000/. Upon entering "uranus" in the search field, the system is expected to yield 15 results. Clicking on any result should show the full content in a new tab, simultaneously increasing the priority of the current result.
+The `init.sh` script is designed to launch both the server and frontend, and it should automatically open the default browser, directing it to http://localhost:3000/. Upon entering "uranus" in the search field, the system is expected to yield 15 results. Clicking on any result should show the full content in a new tab, simultaneously increasing the priority of the current result.
 
 ## Tokenization
 The documents have been transformed to lowercase, and the tokens are separated by non-English letter characters. Therefore, the only acceptable input is a string composed of characters from the range [a-z, A-Z].
