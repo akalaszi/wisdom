@@ -14,6 +14,7 @@ export class PriorityDocumentStore {
   retrieveTopN(n: number): SearchableDocument[] {
     const documents: SearchableDocument[] = [];
     let leftover = n;
+    // Iterate from the highest priority to the lowest.
     for (let i = this.priorityStores.length - 1; i >= 0; i--) {
       const documentsWithHighestPrio =
         this.priorityStores[i].retrieve(leftover);

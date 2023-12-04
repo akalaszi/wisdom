@@ -33,7 +33,6 @@ export class SearchEngine {
   }
 
   upVote(document: SearchableDocument) {
-    logger.info(`Upvoting ${document.uri}`);
     const previoiusPriority = document.clickCount;
     document.incrementClickCount();
     logger.info(`Increased priority:${document.clickCount}`);
