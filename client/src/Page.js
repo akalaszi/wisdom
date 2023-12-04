@@ -3,10 +3,11 @@ function Page({ result, onIncrement, onDecrement }) {
     return null;
   }
 
-  async function  handleLinkClick(uri) {
+  async function handleLinkClick(uri) {
     console.log(`Link clicked: ${uri}`);
     await fetch(`/upvote?uri=${uri}`, {
-      method: 'PATCH'});
+      method: "PATCH",
+    });
     console.log(`Upvoted: ${uri}`);
   }
 
@@ -27,11 +28,20 @@ function Page({ result, onIncrement, onDecrement }) {
           <p></p>
         </div>
       ))}
-
-      {result.pageNumber > 0 && <button onClick={onDecrement}>Previous</button>}
-      <div>total hits: {result.totalResults}</div>
-      <div>current page: {result.pageNumber}</div>
-      {result.nextPageSize > 0 && <button onClick={onIncrement}>Next</button>}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        {result.pageNumber > 0 && (
+          <button onClick={onDecrement}>Previous</button>
+        )}
+        <div style={{margin:"10px"}}> total hits: {result.totalResults} current page: {result.pageNumber} </div>
+        {result.nextPageSize > 0 && <button onClick={onIncrement}>Next</button>}
+      </div>
     </div>
   );
 }

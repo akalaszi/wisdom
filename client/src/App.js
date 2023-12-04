@@ -6,42 +6,55 @@ function SearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
 
-  const  handlePageIncrement = async () => {
-    console.log("before increment :" + pageNumber)
+  const handlePageIncrement = async () => {
     pageNumber = pageNumber + 1;
-    console.log("after increment :" + pageNumber)
-    await search()
+    await search();
   };
 
   const handlePageDecrement = async () => {
-    console.log("before deccrement :" + pageNumber)
     pageNumber = pageNumber - 1;
-    console.log("after decrement :" + pageNumber)
-    await search()
+    await search();
   };
 
   const search = async (event) => {
     if (event) {
+      pageNumber = 0;
       event.preventDefault();
     }
-    console.log("before search :" + pageNumber)
-    const newResults = await fetch(`/search?q=${query}&pageNumber=${pageNumber}`).then((res) =>
-      res.json()
-    );
+    console.log("before search :" + pageNumber);
+    const newResults = await fetch(
+      `/search?q=${query}&pageNumber=${pageNumber}`
+    ).then((res) => res.json());
     setResults(newResults);
   };
 
   return (
-    <div>
-      <form onSubmit={search}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+    <div style={{ width: "100%" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <form onSubmit={search}>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{ margin: "10px" }}
+          />
+          <button type="submit">Search</button>
+        </form>
+      </div>
+      {
+        <Page
+          result={results}
+          onIncrement={handlePageIncrement}
+          onDecrement={handlePageDecrement}
         />
-        <button type="submit">Search</button>
-      </form>
-      {<Page result={results} onIncrement={handlePageIncrement} onDecrement={handlePageDecrement} />}
+      }
     </div>
   );
 }
