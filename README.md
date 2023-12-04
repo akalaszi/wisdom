@@ -12,20 +12,21 @@ On Windows follow the steps as per the `init.sh` above.
 For subsequent launches, use `npm start` from the project root.
 
 ## How to use
-The `init.sh` should start up the server+frontend and open up the default browser pointing to the `http://localhost:3000/`.
-Type `uranus` in the search field: it should return 15 results. If any result is clicked, the full content should be opened automatically in a new tab, at the same time the current result priority is increased. 
+The `init.sh`` script is designed to launch both the server and frontend, and it should automatically open the default browser, directing it to http://localhost:3000/. Upon entering "uranus" in the search field, the system is expected to yield 15 results. Clicking on any result should show the full content in a new tab, simultaneously increasing the priority of the current result.
 
 ## Tokenization
-All the docs are converted to lower case and the tokens are split by non English letter characters. 
-This means that the only valid input is a string consisting of characters [a-z,A-Z].
+The documents have been transformed to lowercase, and the tokens are separated by non-English letter characters. Therefore, the only acceptable input is a string composed of characters from the range [a-z, A-Z].
 
 ## OMDB search
-During every search an OMDB query is executed and the whole resulting document is indexed and added to the collection. This means that this document will be returned in any subsequent searche if its content matches the search query. 
+In each search, an OMDB query is performed, and the entire resulting document is indexed and included in the collection. Consequently, this document will be retrieved in any subsequent search if its content aligns with the search query.
 
 ## Known issues - due to the time constraint
-- Junit tests should have been added. -> it was not required
-- Paging performance could have been optimized. e.g.: for page=n, the backend fetches all the n*pageSize docs and returs the last n. 
-- API key is exposed. OMDB uses http and query param for the apikey, so if someone who wants my key, can snuff it anyhow. This should have been injected from env variable.
+- The addition of JUnit tests was not a requirement.
+- Paging performance could have been enhanced; for instance, for page n, the backend retrieves all n*pageSize documents and returns the last n.
+- The API key is exposed. OMDB utilizes HTTP and query parameters for the API key, making it susceptible to interception. Ideally, the key should have been injected from an environment variable for added security.
+
+## Credits
+Used ChatGPT to make this doc nicer in English and used GitHub CoPilot for the React.JS part.
 
 
 
