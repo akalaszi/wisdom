@@ -1,14 +1,12 @@
 import { SearchableDocument } from "../searchEngine/SearchableDocument";
-import { PORT } from "../server";
 
 export class DataFile {
   DEFAULT_SUMMARY_SIZE = 3;
-  URI_PREFIX = `http://localhost:${PORT}/`;
-  filePath: string;
+  uri: string;
   content: string[];
 
-  constructor(filePath: string, content: string[]) {
-    this.filePath = filePath;
+  constructor(uri: string, content: string[]) {
+    this.uri = uri;
     this.content = content;
   }
 
@@ -44,7 +42,7 @@ export class DataFile {
     const tokens = this.extractUniqueTokens();
     const summary = this.extractSummary();
     return new SearchableDocument(
-      this.URI_PREFIX + this.filePath,
+      this.uri,
       summary,
       tokens
     );

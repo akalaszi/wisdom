@@ -23,11 +23,12 @@ export async function fetchMovie(title: string): Promise<DataFile[]> {
     }
 
     logger.info(`OMDB fetch for the movie title: \"${cleanedTitle}\"`);
-    const response = await axios.get(URI + cleanedTitle);
+    const uri = URI + cleanedTitle;
+    const response = await axios.get(uri);
     const content = JSON.stringify(response.data).split("\n");
     visited.add(title);
     logger.info(`OMDB fetch done for the movie title: \"${cleanedTitle}\"`);
-    return Promise.resolve([new DataFile(cleanedTitle, content)]);
+    return Promise.resolve([new DataFile(uri, content)]);
   } catch (error) {
     logger.error(`Error fetching data: ${error}`);
     return Promise.resolve([]);
