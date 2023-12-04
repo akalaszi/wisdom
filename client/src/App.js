@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Page from './Page';
 
-function App() {
+function SearchPage() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+
+  const search = async () => {
+    const newResults = await fetch(`/api/search?q=${query}`).then(res => res.json());
+    setResults(newResults);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input type="text" value={query} onChange={e => setQuery(e.target.value)} />
+      <button onClick={search}>Search</button>
+      {
+        <Page result={results} query={query} /> 
+      }
     </div>
   );
 }
 
-export default App;
+export default SearchPage;

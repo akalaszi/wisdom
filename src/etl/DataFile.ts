@@ -1,8 +1,9 @@
 import { SearchableDocument } from "../searchEngine/SearchableDocument";
+import { PORT } from "../server";
 
 export class DataFile {
   DEFAULT_SUMMARY_SIZE = 3;
-  URI_PREFIX = "http://localhost:3000/";
+  URI_PREFIX = `http://localhost:${PORT}/`;
   filePath: string;
   content: string[];
 

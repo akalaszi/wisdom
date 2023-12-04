@@ -28,7 +28,7 @@ export class Paginator {
 
 export class Page {
   pageNumber: number;
-  results: SearchableDocument[];
+  results: PageItem[];
   nextPageSize: number;
   totalResults: number;
   constructor(
@@ -38,8 +38,18 @@ export class Page {
     totalResults: number
   ) {
     this.pageNumber = pageNumber;
-    this.results = results;
+    this.results = results.map((result) => {
+      return new PageItem(result.uri, result.summary);
+    });
     this.nextPageSize = nextPageSize;
     this.totalResults = totalResults;
+  }
+}
+class PageItem {
+  uri: string;
+  summary: string;
+  constructor(uri: string, summary: string) {
+    this.uri = uri;
+    this.summary = summary;
   }
 }

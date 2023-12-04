@@ -3,6 +3,8 @@ import { SearchEngine } from "./searchEngine/SearchEngine";
 import { Paginator } from "./searchEngine/Paginator";
 import { logger } from "./Logger";
 
+export const PORT = 3001;
+
 const wordSearch = SearchEngine.build();
 const paginator = new Paginator(wordSearch);
 
@@ -10,7 +12,7 @@ let app = express();
 const port = 3000;
 
 app.get("/search", async (req, res) => {
-  const query = req.query.q;
+  const query = (req.query.q as string).trim().toLowerCase();
   let pageNumber: number;
   if (req.query.pageNumber) {
     pageNumber = parseInt(req.query.pageNumber as string);
@@ -18,7 +20,7 @@ app.get("/search", async (req, res) => {
     pageNumber = 0;
   }
   logger.info(`Searching for ${query} at page ${pageNumber}`);
-  const result = await paginator.paginatedSearch("the", pageNumber);
+  const result = await paginator.paginatedSearch(query, pageNumber);
   logger.info(`Found ${result.totalResults} results`);
   res.send(result);
 });
