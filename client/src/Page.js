@@ -3,13 +3,25 @@ function Page({ result, onIncrement, onDecrement }) {
     return null;
   }
 
+  async function  handleLinkClick(uri) {
+    console.log(`Link clicked: ${uri}`);
+    await fetch(`/upvote?uri=${uri}`, {
+      method: 'PATCH'});
+    console.log(`Upvoted: ${uri}`);
+  }
+
   return (
     <div>
       <p></p>
       {result.results.map((r, index) => (
         <div key={index}>
           <div>{r.summary}</div>
-          <a href={r.uri} target="_blank" rel="noopener noreferrer">
+          <a
+            href={r.uri}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => handleLinkClick(r.uri)}
+          >
             {r.uri}
           </a>
           <p></p>
