@@ -5,20 +5,20 @@ import { logger } from "../Logger";
 const PAGE_SIZE = 10;
 
 export class Paginator {
-  wordSearch: SearchEngine.WordSearch;
-  constructor(wordSearch: SearchEngine.WordSearch) {
-    this.wordSearch = wordSearch;
+  searchEngine: SearchEngine;
+  constructor(searchEngine: SearchEngine) {
+    this.searchEngine = searchEngine;
   }
 
   async paginatedSearch(searchTerm: string, pageNumber: number): Promise<Page> {
     const topN = (pageNumber + 1) * PAGE_SIZE;
-    const topNReults: SearchableDocument[] = await this.wordSearch.search(
+    const topNReults: SearchableDocument[] = await this.searchEngine.search(
       searchTerm,
       topN
     );
     const lastNResults = topNReults.slice(-PAGE_SIZE);
     const totalResultCount: number =
-      this.wordSearch.getDocumentCount(searchTerm);
+      this.searchEngine.getDocumentCount(searchTerm);
     const nextPageSize = Math.max(Math.min(PAGE_SIZE, totalResultCount - topN),0);
     return Promise.resolve(
       new Page(pageNumber, lastNResults, nextPageSize, totalResultCount)

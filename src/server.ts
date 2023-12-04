@@ -1,12 +1,13 @@
 import express from "express";
-import { SearchEngine } from "./searchEngine/SearchEngine";
 import { Paginator } from "./searchEngine/Paginator";
 import { logger } from "./Logger";
+import { buildSearchEngine } from "./searchEngine/SearchEngine";
+import { DocumentStore } from "./searchEngine/DocumentStore";
 
 export const PORT = 3001;
-
-const wordSearch = SearchEngine.build();
-const paginator = new Paginator(wordSearch);
+const documentStore = new DocumentStore();
+const searchEngine = buildSearchEngine(documentStore);
+const paginator = new Paginator(searchEngine);
 
 let app = express();
 const port = 3000;
@@ -26,12 +27,14 @@ app.get("/search", async (req, res) => {
 });
 
 app.patch("/upvote", (req, res) => {
-  const document = wordSearch.getDocument(req.query.uri as string);
+  const uri = Buffer.from(req.query.uri as string, 'base64').toString('utf8');
+  logger.info(`Upvoting ${uri}`);
+  const document = documentStore.getDocument(uri);
   if (!document) {
     res.status(404).send("Not found");
     return;
   }
-  wordSearch.upVote(document);
+  searchEngine.upVote(document);
   res.send("OK");
 });
 

@@ -5,7 +5,9 @@ function Page({ result, onIncrement, onDecrement }) {
 
   async function handleLinkClick(uri) {
     console.log(`Link clicked: ${uri}`);
-    await fetch(`/upvote?uri=${uri}`, {
+    const encodedUri = btoa(uri)
+
+    await fetch(`/upvote?uri=${encodedUri}`, {
       method: "PATCH",
     });
     console.log(`Upvoted: ${uri}`);
